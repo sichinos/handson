@@ -1,0 +1,11 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: configmap-1
+data:
+  key1: hello
+  key2: world
+  sample.property.file: |-
+    pkey.a=value-1
+    pkey.b=value-2
+    pkey.c=value-3

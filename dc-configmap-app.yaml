@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: configmap-app
+  name: configmap-app
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: configmap-app
+        deploymentconfig: configmap-app
+    spec:
+      containers:
+      - command:
+        - sh
+        - -c
+        - echo environment variable ENV_A=${ENV_A} && echo all environment variables... && env && echo && echo file configA.properties has the following contents... && cat /mnt/configA.properties && sleep 300
+        image: busybox:latest
+        imagePullPolicy: Always
+        name: configmap-app
+        resources: {}
+        volumeMounts:
+        - mountPath: /mnt
+          name: confvol1
+        env:
+        - name: ENV_A
+          valueFrom:
+            configMapKeyRef:
+              name: configmap-1
+              key: key1
+        envFrom:
+        - configMapRef:
+            name: configmap-4
+      restartPolicy: Always
+      securityContext: {}
+      volumes:
+      - name: confvol1
+        configMap:
+          name: configmap-3
+  triggers:
+  - type: ConfigChange
